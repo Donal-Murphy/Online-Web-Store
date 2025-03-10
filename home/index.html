@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>    
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Homepage</title>
+	<!-- Link to CDN for bootstrap styles and scripts -->
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <!-- Custom CSS styling for Navbar -->
+	<style>
+		h1 {text-align: center;}
+		h2 {text-align: center;}
+		.navbar-nav.flex-column .nav-link, .navbar-nav.flex-column .navbar-brand {
+		    padding-top: 0.5rem; /* Adjust top padding*/
+		    padding-bottom: 0.5rem; /* Adjust bottom padding*/
+		    text-align: left; /* Align text in to left */
+		}
+       </style>
+</head>
+<body class="bg-dark">
+	<!-- Banner -->
+	<div class="container mt-4">
+		<div class="row justify-content-center mt-4 p-5 bg-secondary text-dark rounded">
+	   		<<h1>The Hobby Fort</h1>
+            <h2>Home</h2>
+		</div>
+	</div>
+	<div class="container-fluid mt-4">
+	    <div class="row">
+	        <div class="col-2">
+	            <!-- Sidebar for site navigation -->
+			  <nav class="navbar navbar-expand-lg">
+			      <div class="container-fluid">
+			          <div class="collapse navbar-collapse" id="navbarNav">
+			              <ul class="navbar-nav flex-column">
+			                  <li class="nav-item">
+			                      <span class="navbar-brand fs-4 fw-bold text-white">Navbar</span>
+			                  </li>
+			                  <li class="nav-item">
+			                      <a class="nav-link active fs-5 text-white" aria-current="page" href="/">Home</a>
+			                  </li>
+			                  <li class="nav-item">
+			                      <a class="nav-link fs-5 text-white" href="/store">Store</a>
+			                  </li>
+			              </ul>
+			          </div>
+			      </div>
+			  </nav>
+	        </div>
+	        <div class="col-8">
+	            <!-- Random image carousel -->
+	            <div class="row justify-content-center">
+	                <div class="col">
+	                    <div id="carousel" class="carousel slide" data-bs-ride="carousel">
+	                        <div class="carousel-inner">
+	                            <div class="carousel-item active">
+	                                <img id="randomImage1" alt="Random Image" class="d-block img-fluid mx-auto"> <!-- Center the image horizontally -->
+	                            </div>
+	                            <div class="carousel-item">
+	                                <img id="randomImage2" alt="Random Image" class="d-block img-fluid mx-auto"> <!-- Center the image horizontally -->
+	                            </div>
+	                            <div class="carousel-item">
+	                                <img id="randomImage3" alt="Random Image" class="d-block img-fluid mx-auto"> <!-- Center the image horizontally -->
+	                            </div>
+	                        </div>
+	                        <button class="carousel-control-prev" type="button" data-bs-target="#carousel" data-bs-slide="prev">
+	                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+	                            <span class="visually-hidden">Previous</span>
+	                        </button>
+	                        <button class="carousel-control-next" type="button" data-bs-target="#carousel" data-bs-slide="next">
+	                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+	                            <span class="visually-hidden">Next</span>
+	                        </button>
+	                    </div>
+	                </div>
+	            </div>
+	        </div>
+			
+	    </div>
+	</div>
+
+<script>
+ 	// Get the image elements for the carousel by their IDs
+    var imgElement1 = document.getElementById('randomImage1');
+    var imgElement2 = document.getElementById('randomImage2');
+    var imgElement3 = document.getElementById('randomImage3');
+
+	// Array for tracking fetched images
+	var fetchedImages = [];
+
+    // Function to get a random image from '/random-image' endpoint
+    function randomImage(element) {
+        // Make a fetch request to the /random-image endpoint
+        fetch('/random-image-carousel')
+            .then(response => {
+                // Check for error response
+                if (!response.ok) {
+                    throw new Error(`Could not fetch image. Status: ${response.status}`);
+                }
+                // return the Blob object
+                return response.blob();
+            })
+            .then(blob => {
+                // Create a path for the Blob object
+                const imagePath = URL.createObjectURL(blob);
+				
+				//Check for duplicate images
+				if(fetchedImages.includes(imagePath)) {
+					randomImage(element);	//Get new random image
+					return;
+				}
+				
+				// Add the fetched image to the array of fetched images
+	            fetchedImages.push(imagePath);
+				
+                // Set the source attribute of the image element to the image path
+                element.src = imagePath;
+            })
+            .catch(error => console.error('Unexpected error with image fetch:', error));
+    }
+
+    // Generate random images for carousel
+    randomImage(imgElement1);
+    randomImage(imgElement2);
+    randomImage(imgElement3);
+
+    // Initialize the carousel manually after all images are loaded
+    var carousel = document.getElementById('carousel');
+    var carouselInstance = new bootstrap.Carousel(carousel);
+</script>
+</body>
+</html>
